@@ -13,5 +13,13 @@ namespace DataCollector.Helpers
             if (propertyInfo == null) return;
             propertyInfo.SetValue(obj, value);
         }
+
+        public static void ForEach<T>(this IEnumerable<T> ie, Action<T> action)
+        {
+            foreach (var i in ie)
+            {
+                action(i);
+            }
+        }
     }
 }

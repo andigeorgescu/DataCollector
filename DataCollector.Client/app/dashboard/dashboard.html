@@ -1,0 +1,83 @@
+﻿<section id="dashboard-view" class="mainbar" data-ng-controller="dashboard as vm">
+    <section class="matter">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h3>{{vm.title}}</h3>
+                </div>
+                <div class="col-md-6" style="float: right;">
+                    <!-- <ul class="today-datas">
+                        <li class="blightblue">
+                            <div class="pull-left"><i class="fa fa-plane"></i>
+                            </div>
+                            <div class="datas-text pull-right">
+                                <span class="bold">May 18 - 19, 2015</span> Castle Resort, Neverland
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <li class="borange">
+                            <div class="pull-left"><i class="fa fa-envelope"></i>
+                            </div>
+                            <div class="datas-text pull-right">
+                                <span class="bold">{{vm.messageCount}}</span> Messages
+                            </div>
+                            <div class="clearfix"></div>
+                        </li>
+
+                    </ul>-->
+                    <div class="input-group">
+                        <md-autocomplete ng-disabled="vm.isDisabled"
+                                         md-no-cache="vm.noCache"
+                                         md-selected-item="vm.selectedItem"
+                                         md-search-text-change="vm.searchTextChange(vm.searchText)"
+                                         md-search-text="vm.searchText"
+                                         md-selected-item-change="vm.selectedItemChange(item)"
+                                         md-items="item in vm.querySearch(vm.searchText)"
+                                         md-item-text="item.display"
+                                         md-min-length="0"
+                                         placeholder="Wiki to scrape...">
+                            <md-item-template>
+                                <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                            </md-item-template>
+                        </md-autocomplete>
+                        <span class="input-group-btn" style="height:100%">
+                            <button class="btn btn-info" style="height:100%" ng-click="vm.scrape(vm.searchText)">
+                                <i class="fa fa-search" style="font-size: 20px; margin: 0 auto;"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" ng-if="vm.data">
+                <div class="col-md-6">
+                    <div class="widget wviolet">
+                        <div data-cc-widget-header title="Extracted data"
+                             allow-collapse="true"></div>
+                        <div class="widget-content text-center text-info">
+                            <textarea rows="20" cols="115">
+                                {{vm.data}}
+                            </textarea>
+                        </div>
+                        <div class="widget-foot">
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="widget wgreen">
+                        <div data-cc-widget-header title="Web Page View"
+                             allow-collapse="true"></div>
+                        <div class="widget-content text-center text-info">
+                            <iframe id="pageViewFrame" style="width: 100%; height: 600px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="0"></iframe>
+                        </div>
+                        <div class="widget-foot">
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

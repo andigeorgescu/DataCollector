@@ -1,13 +1,12 @@
 ﻿using System.Web;
-using System.Web.Mvc;
+using System.Web.Http.Filters;
 
 namespace DataCollector
 {
     public class FilterConfig
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        public static void RegisterHttpFilters(HttpFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
         }
     }
 }

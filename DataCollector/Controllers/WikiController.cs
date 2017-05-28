@@ -3,63 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Script.Serialization;
-using DataCollector.Helpers;
 using DataCollector.Models;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DataCollector.Controllers
 {
     [RoutePrefix("api/wiki")]
+    [EnableCors(origins: "http://localhost:63119", headers: "*", methods: "*")]
     public class WikiController : ApiController
     {
         [Route("ScrapePage")]
-        public HttpResponseMessage ScrapePage()
+        [HttpPost]
+        public HttpResponseMessage ScrapePage(WebPageModel model)
         {
             try
             {
-                var url = "https://ro.wikipedia.org/wiki/Lista_ora%C8%99elor_din_Rom%C3%A2nia";
+                //var url = "https://ro.wikipedia.org/wiki/Lista_ora%C8%99elor_din_Rom%C3%A2nia";
                 var file = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "RawData\\text.txt");
-                var location = "Bucuresti";
-                var parameter = "Locatie";
 
                 var htmlWeb = new HtmlWeb()
                 {
                     AutoDetectEncoding = true,
                     UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
                 };
-                var htmlDocument = htmlWeb.Load(url);
+                var htmlDocument = htmlWeb.Load(model.Url);
 
                 var dataTable = GetWikiTable(htmlDocument);
                 if (null == dataTable) return new HttpResponseMessage(HttpStatusCode.NotFound);
 
                 var header = GetTableHeaders(dataTable);
-                /*       foreach (var h in header)
-                       {
-                           file.Write(h);
-                       }
-       */
-
                 var contentList = GetTableContent(dataTable);
-
-                file.Write(ParseToJson(header, contentList));
-                /*
-                                var rows = from c in contentList
-                                           group c by c.Key
-                                    into grp
-                                           select string.Join(" ", grp.Select(s => s.Value));
-
-                                foreach (var r in rows)
-                                {
-                                    file.WriteLine(r);
-                                }*/
-
+                file.Write(new JavaScriptSerializer().Serialize(ParseToJson(header, contentList)));
                 file.Close();
 
-                return new HttpResponseMessage(HttpStatusCode.OK);
+                var rowGroupData = ParseToJson(header, contentList)
+                    .GroupBy(g => g.Row, (key, value) => new {key, value});
+                
+                var list = new JavaScriptSerializer().Serialize(rowGroupData);
+                var dataFormatted = JToken.Parse(list).ToString(Formatting.Indented);
+
+                return Request.CreateErrorResponse(HttpStatusCode.OK, dataFormatted);
             }
             catch (Exception ex)
             {
@@ -103,7 +91,7 @@ namespace DataCollector.Controllers
             return content;
         }
 
-        public string ParseToJson(IList<string> header, IList<KeyValuePair<int, string>> content)
+        public IList<DataItem> ParseToJson(IList<string> header, IList<KeyValuePair<int, string>> content)
         {
             var items = new List<DataItem>();
 
@@ -111,13 +99,13 @@ namespace DataCollector.Controllers
             {
                 items.Add(new DataItem()
                 {
-                    Key = header[c%header.Count],
+                    Key = header[c % header.Count],
                     Value = content[c].Value,
                     Row = content[c].Key
                 });
             }
-            
-            return new JavaScriptSerializer().Serialize(items);
+
+            return items;
         }
     }
 }
