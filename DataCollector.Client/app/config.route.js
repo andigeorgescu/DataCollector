@@ -30,7 +30,7 @@
                     }
                 }
             }, {
-                url: '/admin',
+                url: '/doc',
                 config: {
                     title: 'Document Scraper',
                     templateUrl: 'app/admin/admin.html',

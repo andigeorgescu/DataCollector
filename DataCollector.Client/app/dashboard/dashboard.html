@@ -50,7 +50,7 @@
                 </div>
             </div>
             <hr />
-            <div class="row" ng-if="vm.data">
+            <div class="row" ng-show="vm.data">
                 <div class="col-md-6">
                     <div class="widget wviolet">
                         <div data-cc-widget-header title="Extracted data"
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="widget wgreen">
-                        <div data-cc-widget-header title="Web Page View"
+                        <div data-cc-widget-header title="Web Page Viewer"
                              allow-collapse="true"></div>
                         <div class="widget-content text-center text-info">
                             <iframe id="pageViewFrame" style="width: 100%; height: 600px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="0"></iframe>
