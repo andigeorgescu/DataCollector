@@ -1,12 +1,11 @@
 ﻿(function () {
     'use strict';
     var controllerId = 'admin';
-    angular.module('app').controller(controllerId, ['common', admin]);
+    angular.module('app').controller(controllerId, ['common','datacontext', admin]);
 
-    function admin(common) {
+    function admin(common, datacontext) {
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
-        var iframe = document.getElementById("pageViewFrame");
 
         var vm = this;
         vm.title = 'Document scraper';
@@ -21,9 +20,10 @@
 
         vm.scrape = function (link) {
             if (!link) return;
-           // getWikiData(link).then(function () {
-                setIframeSrc(link);
-           // })
+            // getWikiData(link).then(function () {
+            vm.link = link;
+            setIframeSrc(link);
+            // })
         }
 
         vm.simulateQuery = false;
@@ -89,6 +89,7 @@
         }
 
         function setIframeSrc(url) {
+            var iframe = document.getElementById("pageViewFrame");
             iframe.src = url;
         }
 
@@ -107,6 +108,16 @@
             if (keyIndex < 0) return;
 
             vm.keywords.splice(keyIndex, 1);
+        }
+
+        vm.scrapeDoc = function () {
+            var model = {};
+            model.Keywords = vm.keywords;
+            model.Url = vm.link;
+            datacontext.getScrapedDoc(model)
+                .then(function (response) {
+                    vm.scrapedData = response;
+                });
         }
     }
 })();

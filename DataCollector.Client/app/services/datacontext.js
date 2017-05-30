@@ -10,7 +10,8 @@
         var serviceBase = config.serviceBase;
         var service = {
             getScrapedWiki: getScrapedWiki,
-            getMessageCount: getMessageCount
+            getMessageCount: getMessageCount,
+            getScrapedDoc: getScrapedDoc
         };
 
         return service;
@@ -22,6 +23,12 @@
                     .then(function (results) {
                         return results.data;
                     }));
+        }
+
+        function getScrapedDoc(model) {
+            return $q.when($http.post(serviceBase + 'api/docs/scrapedocument/', model).then(function(results) {
+                return results.data;
+            }))
         }
     }
 })();

@@ -30,7 +30,7 @@
                 </div>
             </div>
             <hr />
-            <div class="row">
+            <div class="row" ng-show="vm.link">
                 <div class="col-md-6">
                     <div class="form-group">
                         <div class="input-group">
@@ -43,7 +43,7 @@
                             </span>
                         </div>
                         <hr/>
-                        <div ng-if="vm.keywords">
+                        <div ng-if="vm.keywords.length > 0">
                             <div style="border-right: 1px solid #DDDDDD; display:inline-block">
                                 <button class="btn btn-success" ng-click="vm.scrapeDoc()">Scrape</button>
                             </div>
@@ -54,20 +54,34 @@
                             <hr/>
                         </div>
                     </div>
-                        
 
-                    <!--<div class="widget wviolet">
-                        <div data-cc-widget-header title="Extracted data"
+                    <div class="widget wviolet" ng-show="vm.scrapedData.results.length > 0 || vm.scrapedData.noResultsKeys.length > 0">
+                        <div data-cc-widget-header title="Scraped data"
                              allow-collapse="true"></div>
                         <div class="widget-content text-center text-info">
-                            <textarea rows="20" cols="115">
-                                {{vm.data}}
-                            </textarea>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Result</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="r in vm.scrapedData.results">
+                                    <td>{{r.key}}</td>
+                                    <td>{{r.value}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div style="display: inline-block" ng-show="vm.scrapedData.noResultsKeys.length > 0">
+                                <label>Not found keywords: </label>
+                                <label ng-repeat="r in vm.scrapedData.noResultsKeys" class="label label-warning">{{r}}</label>
+                            </div>
                         </div>
                         <div class="widget-foot">
                             <div class="clearfix"></div>
                         </div>
-                    </div>-->
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="widget wgreen">
