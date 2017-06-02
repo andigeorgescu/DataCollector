@@ -5,9 +5,9 @@ using System.Web;
 
 namespace DataCollector.Models
 {
-    public class WebPageModel
+    public class CrawlerModel
     {
-        public string Url { get; set; }
+        public IList<DocumentModel> Documents { get; set; }
         public string Location { get; set; }
     }
 }

@@ -11,7 +11,8 @@
         var service = {
             getScrapedWiki: getScrapedWiki,
             getMessageCount: getMessageCount,
-            getScrapedDoc: getScrapedDoc
+            getScrapedDoc: getScrapedDoc,
+            crawl: crawl
         };
 
         return service;
@@ -27,6 +28,12 @@
 
         function getScrapedDoc(model) {
             return $q.when($http.post(serviceBase + 'api/docs/scrapedocument/', model).then(function(results) {
+                return results.data;
+            }))
+        }
+
+        function crawl(model) {
+            return $q.when($http.post(serviceBase + 'api/docs/crawl/', model).then(function (results) {
                 return results.data;
             }))
         }

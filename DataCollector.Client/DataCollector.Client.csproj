@@ -94,6 +94,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\crawler\crawler.html" />
+    <Content Include="app\crawler\crawler.js" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
     <Content Include="Content\angular-material.layout-attributes.min.css" />

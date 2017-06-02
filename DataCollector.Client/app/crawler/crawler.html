@@ -1,4 +1,4 @@
-﻿<section id="admin-view" class="mainbar" data-ng-controller="admin as vm">
+﻿<section id="admin-view" class="mainbar" data-ng-controller="crawler as vm">
     <section class="matter">
         <div class="container">
             <div class="row">
@@ -37,12 +37,12 @@
                             <label for="inputKey">Keywords:</label>
                             <input type="text" class="form-control" id="inputKey" ng-model="vm.keyword">
                             <span class="input-group-btn" style="vertical-align: bottom;">
-                                <button class="btn btn-info"ng-click="vm.addKeyword(vm.keyword)">
+                                <button class="btn btn-info" ng-click="vm.addKeyword(vm.keyword)">
                                     <i class="fa fa-plus" style="font-size: 20px; margin: 0 auto;"></i>
                                 </button>
                             </span>
                         </div>
-                        <hr/>
+                        <hr />
                         <div ng-if="vm.keywords.length > 0">
                             <div style="border-right: 1px solid #DDDDDD; display:inline-block">
                                 <button class="btn btn-success" ng-click="vm.scrapeDoc()">Scrape</button>
@@ -51,7 +51,7 @@
                                 {{k}}
                                 <i class="fa fa-times" style="font-size: 13px; margin: 0 auto;" ng-click="vm.removeKeyword(k)"></i>
                             </div>
-                            <hr/>
+                            <hr />
                         </div>
                     </div>
 
@@ -62,16 +62,16 @@
                             <label class="label label-info">Document Dates: <span ng-repeat="d in vm.scrapedData.dates"> {{d | date}} </span></label>
                             <table class="table table-striped">
                                 <thead>
-                                <tr>
-                                    <th>Key</th>
-                                    <th>Result</th>
-                                </tr>
+                                    <tr>
+                                        <th>Key</th>
+                                        <th>Result</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="r in vm.scrapedData.results">
-                                    <td>{{r.key}}</td>
-                                    <td>{{r.value}}</td>
-                                </tr>
+                                    <tr ng-repeat="r in vm.scrapedData.results">
+                                        <td>{{r.key}}</td>
+                                        <td>{{r.value}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <div style="display: inline-block" ng-show="vm.scrapedData.noResultsKeys.length > 0">

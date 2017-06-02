@@ -39,6 +39,17 @@
                         content: '<i class="fa fa-file-text-o"></i> Document Scraper'
                     }
                 }
+            },
+            {
+                url: '/crawl',
+                config: {
+                    title: 'Web Crawler',
+                    templateUrl: 'app/crawler/crawler.html',
+                    settings: {
+                        nav: 3,
+                        content: '<i class="fa fa-arrows"></i> Web Crawler'
+                    }
+                }
             }
         ];
     }

@@ -13,6 +13,8 @@ namespace DataCollector.Models
 
     public class ScrapeDocumentResult
     {
+        public IList<DateTime> Dates { get; set; }
+        public string Location { get; set; }
         public IList<KeyValuePair<string,string>> Results { get; set; }
         public IList<string> NoResultsKeys { get; set; }
     }
