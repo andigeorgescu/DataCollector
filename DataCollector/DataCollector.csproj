@@ -208,8 +208,8 @@
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\CrawlerResult.cs" />
     <Compile Include="Models\DataItem.cs" />
-    <Compile Include="Models\CrawlerModel.cs" />
     <Compile Include="Models\DocumentModel.cs" />
     <Compile Include="Models\WebPageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

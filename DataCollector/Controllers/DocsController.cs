@@ -69,6 +69,12 @@ namespace DataCollector.Controllers
         {
             try
             {
+                var result = new CrawlerResult()
+                {
+                    IsMatch = false,
+                    Urls = new List<KeyValuePair<string,string>>()
+                };
+
                 var htmlWeb = new HtmlWeb()
                 {
                     AutoDetectEncoding = true,
@@ -79,18 +85,87 @@ namespace DataCollector.Controllers
                     htmlDocument.DocumentNode.SelectNodes("//a[@href]")
                         .Where(w => LevenshteinDistance(w.InnerText, model.Location) < 2).ToList();
 
+                if (!dataLinks.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
+                }
+
                 var aElement = dataLinks.FirstOrDefault(w => w.InnerText == model.Location) ?? dataLinks.First();
 
                 var hrefValue = aElement.Attributes.Single(w => w.Name == "href").Value;
+                var parsedUrl = new Uri(model.Url);
 
-                var link = new Uri(model.Url).Host + '/' + hrefValue;
+                var link = BuildUrl(parsedUrl, hrefValue);
+                var results = SeekPath(link);
+                if (!results.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
+                }
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                var matchUrl = MatchKey(results, model.Key);
+                if (null == matchUrl)
+                {
+                    foreach (var r in results)
+                    {
+                        result.Urls.Add(new KeyValuePair<string, string>(r,GetLatestDataUrl(BuildUrl(parsedUrl, r))));
+                    }
+                }
+                else
+                {
+                    result.IsMatch = true;
+                    result.Urls.Add(new KeyValuePair<string, string>(null, GetLatestDataUrl(BuildUrl(parsedUrl, matchUrl))));
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception ex)
             {
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
+        }
+
+        public static string BuildUrl(Uri host, string path)
+        {
+            return host.GetLeftPart(UriPartial.Authority) + '/' + path;
+        }
+
+        public static IList<string> SeekPath(string url)
+        {
+            var urlsToReturn = new List<string>();
+            var parsedLink = new Uri(url);
+            var htmlWeb = new HtmlWeb()
+            {
+                AutoDetectEncoding = true,
+                UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+            };
+            var htmlDocument = htmlWeb.Load(url);
+
+            var dataLinks =
+                    htmlDocument.DocumentNode.SelectNodes("//a[@href]")
+                        .Where(w => w.Attributes.Single(s => s.Name == "href").Value.Contains(parsedLink.AbsolutePath.TrimStart('/'))).ToList();
+
+            //Data cleaning 
+            foreach (var l in dataLinks)
+            {
+                var hrefValue = l.Attributes.Single(w => w.Name == "href").Value;
+                if (urlsToReturn.Any(a => a.Equals(hrefValue)) || hrefValue.Equals(parsedLink.AbsolutePath.TrimStart('/'))) continue;
+
+                urlsToReturn.Add(hrefValue);
+            }
+
+            return urlsToReturn;
+        }
+
+        public static string MatchKey(IList<string> results, string key)
+        {
+            if (key == null) return null; 
+
+            foreach (var r in results)
+            {
+                if (r.ToLower().Contains(key.ToLower())) return r;
+            }
+
+            return null;
         }
 
         private static void GetInfo(string text, ScrapeDocumentResult model)
@@ -102,11 +177,45 @@ namespace DataCollector.Controllers
             foreach (var d in dates)
             {
                 var parsedDate = DateTime.ParseExact(d.ToString(), "dd-MM-yy", CultureInfo.InvariantCulture);
-                if(!dateList.Any(a => a.Equals(parsedDate)))
+                if (!dateList.Any(a => a.Equals(parsedDate)))
                     dateList.Add(parsedDate);
             }
 
             model.Dates = dateList.OrderBy(o => o.Date).ToList();
+        }
+
+        private static string GetLatestDataUrl(string url)
+        {
+            var parsedUrl = new Uri(url);
+            var regex = new Regex(@"[0-9]{2}.[0-9]{2}.[0-9]{4}");
+            string urlToReturn = null;
+
+            var htmlWeb = new HtmlWeb()
+            {
+                AutoDetectEncoding = true,
+                UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+            };
+            var htmlDocument = htmlWeb.Load(url);
+            var dataLinks =
+                    htmlDocument.DocumentNode.SelectNodes("//a[@href]")
+                        .Where(w => regex.IsMatch(w.InnerText)).ToList();
+
+            var currentDate = DateTime.Now.Ticks;
+            var latestDate = DateTime.ParseExact(dataLinks[0].InnerText, "dd.MM.yyyy", CultureInfo.InvariantCulture).Ticks;
+            urlToReturn = dataLinks[0].Attributes.Single(w => w.Name == "href").Value;
+
+            foreach (var d in dataLinks)
+            {
+                var datetimeFormat = DateTime.ParseExact(d.InnerText, "dd.MM.yyyy", CultureInfo.InvariantCulture).Ticks;
+
+                if (currentDate - datetimeFormat < (currentDate - latestDate))
+                {
+                    urlToReturn = d.Attributes.Single(w => w.Name == "href").Value;
+                    latestDate = datetimeFormat;
+                }
+            }
+
+            return BuildUrl(parsedUrl, urlToReturn);
         }
 
         private static string GetTextLine(string text, string keyword)

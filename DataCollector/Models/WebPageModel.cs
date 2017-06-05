@@ -9,5 +9,6 @@ namespace DataCollector.Models
     {
         public string Url { get; set; }
         public string Location { get; set; }
+        public string Key { get; set; }
     }
 }

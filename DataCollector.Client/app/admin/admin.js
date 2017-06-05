@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
     var controllerId = 'admin';
-    angular.module('app').controller(controllerId, ['common','datacontext', admin]);
+    angular.module('app').controller(controllerId, ['common','datacontext', '$routeParams','$timeout', admin]);
 
-    function admin(common, datacontext) {
+    function admin(common, datacontext, $routeParams, $timeout) {
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
 
@@ -15,7 +15,20 @@
 
         function activate() {
             common.activateController([], controllerId)
-                .then(function () { log('Activated Admin View'); });
+                .then(function() {
+                    getParams();
+                    log('Activated Admin View');
+                });
+        }
+
+        function getParams() {
+            if ($routeParams.foundUrl) {
+                vm.searchText = $routeParams.foundUrl;
+                $timeout(function () {
+                    document.getElementById("btnScrape").click();
+                })
+                
+            }
         }
 
         vm.scrape = function (link) {

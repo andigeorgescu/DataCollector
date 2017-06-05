@@ -5,6 +5,10 @@
                 <div class="col-md-3">
                     <h3>{{vm.title}}</h3>
                 </div>
+                <div class="col-md-3">
+                    <input type="text" style="height: 40px;" ng-model="vm.key" placeholder="Keyword" />
+                    <input type="text"  style="height: 40px;" ng-model="vm.area" placeholder="Area"/>
+                </div>
                 <div class="col-md-6" style="float: right;">
                     <div class="input-group">
                         <md-autocomplete ng-disabled="vm.isDisabled"
@@ -21,8 +25,8 @@
                                 <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.display}}</span>
                             </md-item-template>
                         </md-autocomplete>
-                        <span class="input-group-btn" style="height:100%">
-                            <button class="btn btn-info" style="height:100%" ng-click="vm.scrape(vm.searchText)">
+                        <span class="input-group-btn" style="height: 100%">
+                            <button class="btn btn-info" style="height: 100%" ng-click="vm.scrape(vm.searchText)">
                                 <i class="fa fa-search" style="font-size: 20px; margin: 0 auto;"></i>
                             </button>
                         </span>
@@ -30,54 +34,32 @@
                 </div>
             </div>
             <hr />
-            <div class="row" ng-show="vm.link">
+            <div class="row" ng-show="vm.data.isMatch === false">
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <label for="inputKey">Keywords:</label>
-                            <input type="text" class="form-control" id="inputKey" ng-model="vm.keyword">
-                            <span class="input-group-btn" style="vertical-align: bottom;">
-                                <button class="btn btn-info" ng-click="vm.addKeyword(vm.keyword)">
-                                    <i class="fa fa-plus" style="font-size: 20px; margin: 0 auto;"></i>
-                                </button>
-                            </span>
-                        </div>
-                        <hr />
-                        <div ng-if="vm.keywords.length > 0">
-                            <div style="border-right: 1px solid #DDDDDD; display:inline-block">
-                                <button class="btn btn-success" ng-click="vm.scrapeDoc()">Scrape</button>
-                            </div>
-                            <div class="btn btn-info" ng-repeat="k in vm.keywords track by $index">
-                                {{k}}
-                                <i class="fa fa-times" style="font-size: 13px; margin: 0 auto;" ng-click="vm.removeKeyword(k)"></i>
-                            </div>
-                            <hr />
-                        </div>
-                    </div>
-
-                    <div class="widget wviolet" ng-show="vm.scrapedData.results.length > 0 || vm.scrapedData.noResultsKeys.length > 0">
-                        <div data-cc-widget-header title="Scraped data"
+                    <div class="widget wviolet">
+                        <div data-cc-widget-header title="Other results"
                              allow-collapse="true"></div>
                         <div class="widget-content text-center text-info">
-                            <label class="label label-info">Document Dates: <span ng-repeat="d in vm.scrapedData.dates"> {{d | date}} </span></label>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Key</th>
-                                        <th>Result</th>
+                                        <th>Parent</th>
+                                        <th>Document</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="r in vm.scrapedData.results">
+                                    <tr ng-repeat="r in vm.data.urls">
                                         <td>{{r.key}}</td>
                                         <td>{{r.value}}</td>
+                                        <td><input type="button" class="btn btn-info" value="Preview" ng-click="vm.preview(r.value)"/></td>
+                                        <td><input type="button" class="btn btn-success" value="Scrape" ng-click="vm.goToScraper(r.value)"/></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table><!--
                             <div style="display: inline-block" ng-show="vm.scrapedData.noResultsKeys.length > 0">
                                 <label>Not found keywords: </label>
                                 <label ng-repeat="r in vm.scrapedData.noResultsKeys" class="label label-warning">{{r}}</label>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="widget-foot">
                             <div class="clearfix"></div>
@@ -89,7 +71,7 @@
                         <div data-cc-widget-header title="Online Document Viewer"
                              allow-collapse="true"></div>
                         <div class="widget-content text-center text-info">
-                            <iframe id="pageViewFrame" style="width: 100%; height: 600px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="0"></iframe>
+                            <iframe id="previewFrame" style="width: 100%; height: 600px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="0"></iframe>
                         </div>
                         <div class="widget-foot">
                             <div class="clearfix"></div>

@@ -1,9 +1,9 @@
 ﻿(function () {
     'use strict';
     var controllerId = 'crawler';
-    angular.module('app').controller(controllerId, ['common', 'datacontext', admin]);
+    angular.module('app').controller(controllerId, ['common', 'datacontext', '$location', '$route', admin]);
 
-    function admin(common, datacontext) {
+    function admin(common, datacontext, $location, $route) {
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
 
@@ -19,15 +19,25 @@
         }
 
         vm.scrape = function (link) {
-            if (!link) return;
+            if (!link || !vm.area) return;
             var model = {};
             model.url = link;
-            model.location = "Sector 5";
+            model.location = vm.area;
+            model.key = vm.key;
 
             datacontext.crawl(model)
                  .then(function (response) {
-                     vm.scrapedData = response;
-                 });
+                     if (response.isMatch) {
+                         $location.path('doc').search({ foundUrl: response.urls[0] });
+                     } else {
+                         if (response.urls.length === 0) {
+                             toastr.warning("No results were found");
+                             return;
+                         }
+
+                         vm.data = response;
+                     }
+                });
         }
 
         vm.simulateQuery = false;
@@ -92,7 +102,6 @@
 
         }
 
-
         vm.scrapeDoc = function () {
             var model = {};
             model.Keywords = vm.keywords;
@@ -101,6 +110,19 @@
                 .then(function (response) {
                     vm.scrapedData = response;
                 });
+        }
+
+        vm.preview = function(link) {
+            setIframeSrc(link);
+        }
+
+        vm.goToScraper = function(link) {
+            $location.path('doc').search({ foundUrl: link });
+        }
+
+        function setIframeSrc(url) {
+            var iframe = document.getElementById("previewFrame");
+            iframe.src = url;
         }
     }
 })();
