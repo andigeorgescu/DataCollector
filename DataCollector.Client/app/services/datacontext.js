@@ -12,7 +12,8 @@
             getScrapedWiki: getScrapedWiki,
             getMessageCount: getMessageCount,
             getScrapedDoc: getScrapedDoc,
-            crawl: crawl
+            crawl: crawl,
+            getScrapedSheet: getScrapedSheet
         };
 
         return service;
@@ -34,6 +35,12 @@
 
         function crawl(model) {
             return $q.when($http.post(serviceBase + 'api/docs/crawl/', model).then(function (results) {
+                return results.data;
+            }))
+        }
+
+        function getScrapedSheet(model) {
+            return $q.when($http.post(serviceBase + 'api/sheet/ScrapeSheet/', model).then(function (results) {
                 return results.data;
             }))
         }

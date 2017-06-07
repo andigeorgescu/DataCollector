@@ -96,6 +96,8 @@
   <ItemGroup>
     <Content Include="app\crawler\crawler.html" />
     <Content Include="app\crawler\crawler.js" />
+    <Content Include="app\sheet\sheet.html" />
+    <Content Include="app\sheet\sheet.js" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
     <Content Include="Content\angular-material.layout-attributes.min.css" />
@@ -103,6 +105,7 @@
     <Content Include="Content\angular-material.layouts.ie_fixes.css" />
     <Content Include="Content\angular-material.layouts.min.css" />
     <Content Include="Content\angular-material.min.css" />
+    <Content Include="Content\general.css" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -110,6 +113,8 @@
     <Content Include="scripts\angular-animate.min.js.map" />
     <Content Include="scripts\angular-aria.js" />
     <Content Include="scripts\angular-aria.min.js" />
+    <Content Include="scripts\angular-base64-upload.js" />
+    <Content Include="scripts\angular-base64.js" />
     <Content Include="scripts\angular-material-mocks.js" />
     <Content Include="scripts\angular-material.js" />
     <Content Include="scripts\angular-material.min.js" />
@@ -193,6 +198,7 @@
     <Content Include="scripts\moment-with-langs.min.js" />
     <Content Include="scripts\moment.js" />
     <Content Include="scripts\moment.min.js" />
+    <Content Include="scripts\ng-file-upload.min.js" />
     <Content Include="scripts\spin.js" />
     <Content Include="scripts\spin.min.js" />
     <Content Include="scripts\toastr.js" />

@@ -50,6 +50,17 @@
                         content: '<i class="fa fa-arrows"></i> Web Crawler'
                     }
                 }
+            },
+            {
+                url: '/sheet',
+                config: {
+                    title: 'Sheet Scraper',
+                    templateUrl: 'app/sheet/sheet.html',
+                    settings: {
+                        nav: 4,
+                        content: '<i class="fa fa-file-excel-o"></i> Sheet Scraper'
+                    }
+                }
             }
         ];
     }

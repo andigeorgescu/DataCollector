@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    var controllerId = 'crawler';
+    var controllerId = 'sheet';
     angular.module('app').controller(controllerId, ['common', 'datacontext', '$location', '$route', admin]);
 
     function admin(common, datacontext, $location, $route) {
@@ -8,7 +8,7 @@
         var log = getLogFn(controllerId);
 
         var vm = this;
-        vm.title = 'Web crawler';
+        vm.title = 'Sheet scraper';
         vm.keywords = [];
 
         activate();
@@ -18,25 +18,15 @@
                 .then(function () { log('Activated Crawler View'); });
         }
 
-        vm.scrape = function (link) {
-            if (!link || !vm.area) return;
+        vm.scrape = function () {
             var model = {};
-            model.url = link;
-            model.location = vm.area;
-            model.key = vm.key;
+            model.fileName = vm.docFile.filename;
+            model.fileData = vm.docFile.base64;
 
-            datacontext.crawl(model)
-                 .then(function (response) {
-                     if (response.isMatch) {
-                         $location.path('doc').search({ foundUrl: response.urls[0].value });
-                     } else {
-                         if (response.urls.length === 0) {
-                             toastr.warning("No results were found");
-                             return;
-                         }
-
-                         vm.data = response;
-                     }
+            datacontext.getScrapedSheet(model)
+                .then(function (response) {
+                    vm.data = response;
+                    debugger;
                 });
         }
 
@@ -102,27 +92,12 @@
 
         }
 
-        vm.scrapeDoc = function () {
-            var model = {};
-            model.Keywords = vm.keywords;
-            model.Url = vm.link;
-            datacontext.getScrapedDoc(model)
-                .then(function (response) {
-                    vm.scrapedData = response;
-                });
-        }
+        vm.onLoad = function (e, reader, file, fileList, fileOjects, fileObj) {
+          
+        };
 
-        vm.preview = function(link) {
-            setIframeSrc(link);
-        }
-
-        vm.goToScraper = function(link) {
-            $location.path('doc').search({ foundUrl: link });
-        }
-
-        function setIframeSrc(url) {
-            var iframe = document.getElementById("previewFrame");
-            iframe.src = url;
+        vm.removeDoc = function() {
+            vm.docFile = [];
         }
     }
 })();

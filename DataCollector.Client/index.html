@@ -5,7 +5,7 @@
         /* This helps the ng-show/ng-hide animations start at the right place. */
         /* Since Angular has this but needs to load, this gives us the class early. */
         .ng-hide {
-            display: none!important;
+            display: none !important;
         }
     </style>
     <title data-ng-bind="title">DataCollector</title>
@@ -30,6 +30,7 @@
     <link href="Content/angular-material.min.css" rel="stylesheet" />
     <link href="content/customtheme.css" rel="stylesheet">
     <link href="content/styles.css" rel="stylesheet" />
+    <link href="content/general.css" rel="stylesheet" />
 </head>
 <body>
     <div>
@@ -61,6 +62,8 @@
     <script src="scripts/moment.js"></script>
     <script src="scripts/ui-bootstrap-tpls-0.10.0.js"></script>
     <script src="scripts/spin.js"></script>
+    <script src="scripts/angular-base64-upload.js"></script>
+    <script src="scripts/ng-file-upload.min.js"></script>
 
     <!-- Bootstrapping -->
     <script src="app/app.js"></script>
@@ -80,6 +83,7 @@
     <script src="app/admin/admin.js"></script>
     <script src="app/dashboard/dashboard.js"></script>
     <script src="app/crawler/crawler.js"></script>
+    <script src="app/sheet/sheet.js"></script>
     <script src="app/layout/shell.js"></script>
     <script src="app/layout/sidebar.js"></script>
 

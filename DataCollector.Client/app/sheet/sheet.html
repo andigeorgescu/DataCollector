@@ -1,0 +1,116 @@
+﻿<style type="text/css">
+    .bgColor {
+        background-color: #fcf8e3 !important;
+    }
+
+    .my-legend .legend-title {
+        text-align: left;
+        margin-bottom: 8px;
+        font-weight: bold;
+        font-size: 90%;
+    }
+
+    .my-legend .legend-scale ul {
+        margin: 0;
+        padding: 0;
+        float: left;
+        list-style: none;
+    }
+
+        .my-legend .legend-scale ul li {
+            display: block;
+            float: left;
+            width: 100px;
+            margin-bottom: 6px;
+            text-align: center;
+            font-size: 80%;
+            list-style: none;
+        }
+
+    .my-legend ul.legend-labels li span {
+        display: block;
+        float: left;
+        height: 30px;
+        width: 100px;
+    }
+
+    .my-legend .legend-source {
+        font-size: 70%;
+        color: #999;
+        clear: both;
+    }
+
+    .my-legend a {
+        color: #777;
+    }
+</style>
+<section id="sheet-view" class="mainbar" data-ng-controller="sheet as vm">
+    <section class="matter">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <h3>{{vm.title}}</h3>
+                </div>
+                <div class="col-md-3">
+                    <div class="fileUpload btn btn-info inline m-t-none m-b-none m-l-none" ng-show="!vm.docFile.filename">
+                        <span>
+                            <i class="fa fa-plus-square-o"></i>
+                            Upload sheet file
+                        </span>
+                        <input type="file" id="inputFile" class="upload c-p m-l-none m-r-none" ng-model="vm.docFile" base-sixty-four-input required onload="vm.onLoad"
+                               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    </div>
+                    <div ng-show="vm.docFile.filename">
+                        <label css="label label-info" style="font-size: 22px; vertical-align: text-top;">{{vm.docFile.filename}}</label>
+                        <span class="btn btn-default" style="margin: 0;" ng-click="vm.removeDoc()">
+                            <i class="fa fa-times" style="font-size: 13px; margin: 0 auto;"></i>
+                        </span>
+                        <button class="btn btn-info" style="height: 100%;margin: 0;" ng-click="vm.scrape()">
+                            Scrape
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" ng-show="vm.data">
+                <div class="col-md-6">
+                    <div class="widget wviolet">
+                        <div data-cc-widget-header title="Data"
+                             allow-collapse="true"></div>
+                        <div class="widget-content text-info">
+                            <div class='my-legend'>
+                                <div class='legend-title'>Predicted value</div>
+                                <div class='legend-scale'>
+                                    <ul class='legend-labels'>
+                                        <li><span class="bgColor"></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Value</th>
+                                        <th>Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="d in vm.data">
+                                        <td ng-class="{'bgColor': d.predictedValue}">{{$index + 1}}</td>
+                                        <td ng-class="{'bgColor': d.predictedValue}">{{d.dateTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                        <td ng-class="{'bgColor': d.predictedValue}">{{d.value | number:1}}</td>
+                                        <td ng-class="{'bgColor': d.predictedValue}">{{d.unit}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="widget-foot">
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

@@ -13,7 +13,9 @@
 
         // 3rd Party Modules
         'ui.bootstrap',      // ui-bootstrap (ex: carousel, pagination, dialog)
-        'ngMaterial'
+        'ngMaterial',
+        'naif.base64',
+        'ngFileUpload'
     ]);
     
     // Handle routing errors and success events
