@@ -10,21 +10,33 @@ using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Script.Serialization;
 using Accord.Math.Optimization.Losses;
 using Accord.Statistics.Models.Regression.Linear;
+using DataCollector.Data;
 using DataCollector.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DataCollector.Controllers
 {
     [RoutePrefix("api/sheet")]
     public class SheetController : ApiController
     {
+        private readonly AppDbContext _db;
+
+        public SheetController()
+        {
+            _db = new AppDbContext();
+        }
+
         [Route("ScrapeSheet")]
         [EnableCors(origins: "http://localhost:63119", headers: "*", methods: "*")]
         public HttpResponseMessage ScrapeSheet(SheetDocumentModel model)
         {
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var filePath = AppDomain.CurrentDomain.BaseDirectory + "//RawData//" + model.FileName;
                 File.WriteAllBytes(filePath, Convert.FromBase64String(model.FileData));
 
@@ -73,6 +85,22 @@ namespace DataCollector.Controllers
                     regression = ols.Learn(regressionInput, regressionOutput);
                 }
 
+                var list = new JavaScriptSerializer().Serialize(scrapedResult);
+                var dataFormatted = JToken.Parse(list).ToString(Formatting.Indented);
+
+                _db.Data.Add(new DataEntity()
+                {
+                    CreatedOn = DateTime.Now,
+                    IdCollectionType = (int)CollectionTypeEnum.Sheet,
+                    JsonObject = dataFormatted
+                });
+                _db.SaveChanges();
+
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+
+                System.Diagnostics.Debug.WriteLine("Timp sheet scraper: " + elapsedMs);
                 return Request.CreateResponse(HttpStatusCode.OK, scrapedResult);
             }
             catch (Exception ex)

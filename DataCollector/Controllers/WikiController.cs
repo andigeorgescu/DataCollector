@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Script.Serialization;
+using DataCollector.Data;
 using DataCollector.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -17,12 +18,20 @@ namespace DataCollector.Controllers
     [EnableCors(origins: "http://localhost:63119", headers: "*", methods: "*")]
     public class WikiController : ApiController
     {
+        private readonly AppDbContext _db;
+
+        public WikiController()
+        {
+            _db = new AppDbContext();    
+        }
+
         [Route("ScrapePage")]
         [HttpPost]
         public HttpResponseMessage ScrapePage(WebPageModel model)
         {
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 //var url = "https://ro.wikipedia.org/wiki/Lista_ora%C8%99elor_din_Rom%C3%A2nia";
                 var file = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "RawData\\text.txt");
 
@@ -47,6 +56,17 @@ namespace DataCollector.Controllers
                 var list = new JavaScriptSerializer().Serialize(rowGroupData);
                 var dataFormatted = JToken.Parse(list).ToString(Formatting.Indented);
 
+                _db.Data.Add(new DataEntity()
+                {
+                    CreatedOn = DateTime.Now,
+                    IdCollectionType = (int) CollectionTypeEnum.Wiki,
+                    JsonObject = dataFormatted
+                });
+                _db.SaveChanges();
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                System.Diagnostics.Debug.WriteLine("Timp wiki scraper: " + elapsedMs);
                 return Request.CreateErrorResponse(HttpStatusCode.OK, dataFormatted);
             }
             catch (Exception ex)

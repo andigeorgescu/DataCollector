@@ -1,3 +1,5 @@
+using DataCollector.Data;
+
 namespace DataCollector.Migrations
 {
     using System;
@@ -26,6 +28,25 @@ namespace DataCollector.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            context.CollectionType.AddOrUpdate(
+                c =>c.Name, new CollectionType()
+                {
+                    Name = "Wiki"
+                },
+                new CollectionType()
+                {
+                    Name = "PDF"
+                },
+                new CollectionType()
+                {
+                    Name = "Sheet"
+                },
+                new CollectionType()
+                {
+                    Name = "Nav"
+                }
+                );
         }
     }
 }

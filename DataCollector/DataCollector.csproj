@@ -207,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Entities\" />
     <Folder Include="Providers\" />
   </ItemGroup>
   <ItemGroup>
@@ -224,7 +225,12 @@
     </Compile>
     <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="Migrations\201706271457175_Initial.cs" />
+    <Compile Include="Migrations\201706271457175_Initial.Designer.cs">
+      <DependentUpon>201706271457175_Initial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\CollectionTypeEnum.cs" />
     <Compile Include="Models\CrawlerResult.cs" />
     <Compile Include="Models\DataItem.cs" />
     <Compile Include="Models\DocumentModel.cs" />
@@ -256,7 +262,11 @@
     </Content>
     <Content Include="Scripts\_references.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201706271457175_Initial.resx">
+      <DependentUpon>201706271457175_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />

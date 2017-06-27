@@ -9,21 +9,34 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Script.Serialization;
+using DataCollector.Data;
 using DataCollector.Helpers;
 using DataCollector.Models;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DataCollector.Controllers
 {
     [RoutePrefix("api/docs")]
     public class DocsController : ApiController
     {
+        private readonly AppDbContext _db;
+
+        public DocsController()
+        {
+            _db = new AppDbContext();
+        }
+
         [Route("ScrapeDocument")]
         [EnableCors(origins: "http://localhost:63119", headers: "*", methods: "*")]
         public async Task<HttpResponseMessage> ScrapeDocument(DocumentModel model)
         {
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                
                 var modelToReturn = new ScrapeDocumentResult()
                 {
                     NoResultsKeys = new List<string>(),
@@ -55,6 +68,21 @@ namespace DataCollector.Controllers
                     modelToReturn.Results.Add(new KeyValuePair<string, string>(k, line));
                 }
 
+                var list = new JavaScriptSerializer().Serialize(modelToReturn);
+                var dataFormatted = JToken.Parse(list).ToString(Formatting.Indented);
+
+                _db.Data.Add(new DataEntity()
+                {
+                    CreatedOn = DateTime.Now,
+                    IdCollectionType = (int)CollectionTypeEnum.Pdf,
+                    JsonObject = dataFormatted
+                });
+                _db.SaveChanges();
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+
+                System.Diagnostics.Debug.WriteLine("Timp document scraper: " + elapsedMs);
                 return Request.CreateResponse(HttpStatusCode.OK, modelToReturn);
             }
             catch (Exception ex)
@@ -69,6 +97,9 @@ namespace DataCollector.Controllers
         {
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+
+
                 var result = new CrawlerResult()
                 {
                     IsMatch = false,
@@ -116,6 +147,20 @@ namespace DataCollector.Controllers
                     result.Urls.Add(new KeyValuePair<string, string>(null, GetLatestDataUrl(BuildUrl(parsedUrl, matchUrl))));
                 }
 
+                var list = new JavaScriptSerializer().Serialize(result);
+                var dataFormatted = JToken.Parse(list).ToString(Formatting.Indented);
+
+                _db.Data.Add(new DataEntity()
+                {
+                    CreatedOn = DateTime.Now,
+                    IdCollectionType = (int)CollectionTypeEnum.Nav,
+                    JsonObject = dataFormatted
+                });
+                _db.SaveChanges();
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                System.Diagnostics.Debug.WriteLine("Timp crawler: " + elapsedMs);
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception ex)
